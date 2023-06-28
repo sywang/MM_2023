@@ -47,7 +47,6 @@ class BatchDataLoader(AnnDataLoader):
         return cur_data
 
     def load_data_to_anndata(self) -> ad.AnnData:
-        # Read annotation file
         metadata_df = load_metadata_from_file(self.meta_data_path)
         metadata_df = metadata_df.dropna(axis=0, subset=[BATCH_ID])
         if DEBUG_MODE:
