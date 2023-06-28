@@ -9,7 +9,7 @@ import anndata as ad
 
 sys.path.append(os.getcwd())
 
-from data_loading.batch_data_loader_factory import PlatesDataLoaderFactory, PlatesLoaderDescription
+from data_loading.data_loader_factory import PlatesDataLoaderFactory, PlatesLoaderDescription
 
 
 def load_data_to_anndata(file_name: Optional[Path],
