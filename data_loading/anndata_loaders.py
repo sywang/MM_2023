@@ -11,7 +11,6 @@ import scanpy as sc
 from scipy.sparse import csr_matrix
 from tqdm.contrib.concurrent import process_map
 
-from data_loading.meta_data_columns_names import PLATE_ID
 from data_loading.plates_data_loader import load_plates_data_from_file
 
 
@@ -27,27 +26,28 @@ DEBUG_N_BATCHES = 10
 
 
 class FromPlatesDataLoader(AnnDataLoader):
-    def __init__(self, sc_data_dir: Path, plates_data_path: Path,
+    def __init__(self, sc_data_dir: Path, plates_data_path: Path, plate_id_col_name: str,
                  plates_data_transform_functions: Optional[List[Callable[[pd.DataFrame], pd.DataFrame]]] = None):
         self.sc_data_dir = sc_data_dir
         self.plates_data_path = plates_data_path
+        self.plate_id_col_name = plate_id_col_name
         self.plates_data_transform_functions = plates_data_transform_functions if plates_data_transform_functions is not None else []
 
     def _get_single_plate(self, row_tpl, col_names):
         row = row_tpl[1]
-        logging.info(f"Reading , plate id - {row[PLATE_ID]}")
-        cur_data = sc.read_text(Path(self.sc_data_dir, row[PLATE_ID] + ".txt"))
+        logging.info(f"Reading , plate id - {row[self.plate_id_col_name]}")
+        cur_data = sc.read_text(Path(self.sc_data_dir, row[self.plate_id_col_name] + ".txt"))
         cur_data = cur_data.T
         logging.debug("inserting metadata to the anndata")
         for col_name in col_names:
             cur_data.obs[col_name] = row[col_name]
-        logging.debug(f"converting data from batch id - {row[PLATE_ID]} to sparse matrix")
+        logging.debug(f"converting data from batch id - {row[self.plate_id_col_name]} to sparse matrix")
         cur_data.X = csr_matrix(cur_data.X)
         return cur_data
 
     def load_data_to_anndata(self) -> ad.AnnData:
         plates_data_df = load_plates_data_from_file(self.plates_data_path)
-        plates_data_df = plates_data_df.dropna(axis=0, subset=[PLATE_ID])
+        plates_data_df = plates_data_df.dropna(axis=0, subset=[self.plate_id_col_name])
         if DEBUG_MODE:
             self.plates_data_transform_functions.append(lambda df: df.head(DEBUG_N_BATCHES))
         for transform_func in self.plates_data_transform_functions:

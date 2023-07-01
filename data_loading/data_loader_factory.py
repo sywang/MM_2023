@@ -1,20 +1,12 @@
-from enum import Enum
+from pathlib import Path
 
-import config
-from data_loading.anndata_loaders import FromPlatesDataLoader
+from omegaconf import DictConfig
 
-
-class PlatesLoaderDescription(Enum):
-    MM_MARS_DATASET = "mm_mars_dataset"
-    MM_FULL_DATASET = "mm_full_dataset"  # not implemented
+from data_loading.anndata_loaders import FromPlatesDataLoader, AnnDataLoader
 
 
-class PlatesDataLoaderFactory:
-    @staticmethod
-    def create_batch_dataloader(dataloader_description: PlatesLoaderDescription) -> FromPlatesDataLoader:
-        if dataloader_description == PlatesLoaderDescription.MM_MARS_DATASET:
-            return FromPlatesDataLoader(sc_data_dir=config.MM_MARS_SEQUENCING_DATA_DIR,
-                                        plates_data_path=config.MM_BATCH_META_DATA_PATH,
-                                        plates_data_transform_functions=[])
-        else:
-            raise NotImplementedError("need to implement the specfic dataloader")
+def create_dataloader_from_config(config: DictConfig) -> AnnDataLoader:
+    return FromPlatesDataLoader(sc_data_dir=Path(config.data_loading.sc_sequencing.sc_sequencing_data_dir),
+                                plates_data_path=Path(config.data_loading.plates.plates_data_path),
+                                plate_id_col_name=config.data_loading.plates.plate_id_column_name,
+                                plates_data_transform_functions=[])
