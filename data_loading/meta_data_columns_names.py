@@ -1,1 +1,1 @@
-BATCH_ID = "Amp.Batch.ID"
+PLATE_ID = "Amp.Batch.ID"

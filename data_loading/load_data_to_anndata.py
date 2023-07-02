@@ -9,7 +9,7 @@ import anndata as ad
 
 sys.path.append(os.getcwd())
 
-from data_loading.batch_data_loader_factory import PlatesDataLoaderFactory, PlatesLoaderDescription
+from data_loading.data_loader_factory import PlatesDataLoaderFactory, PlatesLoaderDescription
 
 
 def load_data_to_anndata(file_name: Optional[Path],
@@ -24,7 +24,7 @@ def load_data_to_anndata(file_name: Optional[Path],
 
 
 if __name__ == '__main__':
-    logging.basicConfig(filename='lust_run.log', level=logging.INFO)
+    logging.basicConfig(filename='last_data_loadig_run.log', level=logging.INFO)
     parser = argparse.ArgumentParser(
         prog='AnnData Loading',
         description='loads scRNA data to AnnData and save it to h5ad file')
