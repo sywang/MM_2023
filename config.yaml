@@ -1,11 +1,14 @@
 experiment_name: MARS
 data_loading:
   loaded_adata_dir: .
-  loaded_adata_file_name: adata.h5ad
+  loaded_adata_file_name: raw_adata.h5ad
   plates:
-    plates_data_path: /home/labs/amit/shuangyi/Project_MM_2023/meta_PC_20230605_all.txt
+    plates_data_path: /home/labs/amit/shuangyi/Project_MM_2023/metadata_MM_MARS_20230621.txt # /home/labs/amit/shuangyi/Project_MM_2023/metadata_MM_SPID_20230621.txt
     plate_id_column_name: Amp.Batch.ID
   sc_sequencing:
     sc_sequencing_data_dir: /home/labs/amit/shuangyi/Project_MM_2023/scdata_MARS
+pre_processing:
+  processed_adata_dir: .
+  processed_adata_file_name: pp_adata.h5ad
 logging:
   output_path: last_data_loadig_run.log
