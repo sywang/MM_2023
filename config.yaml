@@ -1,14 +1,25 @@
-experiment_name: MARS
 data_loading:
-  loaded_adata_dir: .
-  loaded_adata_file_name: raw_adata.h5ad
   plates:
-    plates_data_path: /home/labs/amit/shuangyi/Project_MM_2023/metadata_MM_MARS_20230621.txt # /home/labs/amit/shuangyi/Project_MM_2023/metadata_MM_SPID_20230621.txt
+    plates_data_path: /home/labs/amit/shuangyi/Project_MM_2023/metadata_MM_MARS_20230713.txt # /home/labs/amit/shuangyi/Project_MM_2023/metadata_MM_SPID_20230621.txt
     plate_id_column_name: Amp.Batch.ID
   sc_sequencing:
     sc_sequencing_data_dir: /home/labs/amit/shuangyi/Project_MM_2023/scdata_MARS
-pre_processing:
-  processed_adata_dir: .
+annotation:
+  annotations_file_name: /home/labs/amit/shuangyi/Project_MM_2023/annotation_MM_MARS_20230713.txt
+  cell_id_columns_name: 'Unnamed: 0'
+  patient_id_column_name: 'Weizmann.Code'
+  cell_type_columns: 'Annotation'
+pp:
+  mitochondrial_gene_prefix: "MT-"
+  blacklist_genes_prefix_list: [ "ERCC-","MTMR","MTND","MTRN","HSP","MRPS","MRPL", "IGJ","IGH","IGK",
+                                "IGL","DNAJ","IGD","JCHAIN", "MALAT1", "XIST", "HBA1", "HBA2", "HBB", "HBBP1",
+                                "HBD", "HBE1", "HBG1", "HBG2", "HBM", "HBQ1", "HBZ", "HBZP1" ]
+  min_num_cells_per_gene: 3
+  min_num_genes_per_cell: 100
+  min_num_counts_per_cell: 300
+  max_pct_mt_genes_pre_cell: 50
+outputs:
+  output_dir: /home/labs/amit/noamsh/repos/MM_2023
+  logging_file_name: log.log
+  loaded_adata_file_name: raw_adata.h5ad
   processed_adata_file_name: pp_adata.h5ad
-logging:
-  output_path: last_data_loadig_run.log

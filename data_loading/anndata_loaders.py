@@ -11,7 +11,7 @@ import scanpy as sc
 from scipy.sparse import csr_matrix
 from tqdm.contrib.concurrent import process_map
 
-from data_loading.plates_data_loader import load_plates_data_from_file
+from data_loading.utils import load_dataframe_from_file
 
 
 class AnnDataLoader(ABC):
@@ -46,7 +46,7 @@ class FromPlatesDataLoader(AnnDataLoader):
         return cur_data
 
     def load_data_to_anndata(self) -> ad.AnnData:
-        plates_data_df = load_plates_data_from_file(self.plates_data_path)
+        plates_data_df = load_dataframe_from_file(self.plates_data_path)
         plates_data_df = plates_data_df.dropna(axis=0, subset=[self.plate_id_col_name])
         if DEBUG_MODE:
             self.plates_data_transform_functions.append(lambda df: df.head(DEBUG_N_BATCHES))

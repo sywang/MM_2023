@@ -1,0 +1,4 @@
+conda activate sc_clustering_noam
+cd repos/MM_2023
+export JUPYTER_ALLOW_INSECURE_WRITES=true
+jupyter notebook --no-browser --port 28888
