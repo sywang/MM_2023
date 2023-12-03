@@ -2,3 +2,5 @@ conda activate sc_clustering_noam
 cd repos/MM_2023
 export JUPYTER_ALLOW_INSECURE_WRITES=true
 jupyter notebook --no-browser --port 28888
+
+ssh -L 28889:localhost:28889 noamsh@cosmo-02.wexac.weizmann.ac.il
