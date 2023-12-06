@@ -11,8 +11,12 @@ def merge_transcriptom_data_to_raw_hospital(transcriptom_dataset: pd.DataFrame,
 
     ## add post treatment columns
     post_treatment_cols = [col for col in raw_hospital_dataset.columns if ".2" in col]
+    # add fish_columns
+    fish_cols = [col for col in raw_hospital_dataset.columns if
+                 "t(" in col or "del(" in col or col in ['1q21+', 'IGH rearrangement',
+                                                         'Cytogenetics Risk (0=standard risk, 1=single hit, 2=2+ hits)']]
     post_treatment_data = raw_hospital_dataset[raw_hospital_dataset["Time"] != "Post"][
-        ["Code"] + post_treatment_cols].set_index("Code")
+        ["Code"] + post_treatment_cols + fish_cols].set_index("Code")
     dataset = dataset.merge(post_treatment_data, how="left", left_index=True, right_index=True, validate="one_to_one")
 
     ## add data to TAL_3 patients
@@ -44,3 +48,5 @@ def generate_refracrotines_dataset(dataset: pd.DataFrame, treatment: str, non_re
     y = pd.concat([ref_mask[ref_mask].astype(int), non_ref_mask[non_ref_mask].astype(int) - 1])
 
     return X, y
+
+
