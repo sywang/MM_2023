@@ -1,4 +1,5 @@
 from functools import partial
+from typing import List, Optional
 
 import numpy as np
 import optuna
@@ -7,11 +8,14 @@ from sklearn.feature_selection import SequentialFeatureSelector
 from sklearn.model_selection import ShuffleSplit, cross_validate
 from xgboost import XGBClassifier
 
+from clinical_predictions.utils import balanced_subsample
 
-def objective(trial, X_train, y_train):
-    use_feature_selection = False
-    classifier_name = trial.suggest_categorical('classifier', ['XGBoost',
-                                                               'LogisticRegression'])  # ['LogisticRegression']) # ['RandomForest', 'XGBoost', 'LogisticRegression'])
+
+def objective(trial, X_train, y_train, use_feature_selection: bool = False, try_balance_with_subsample: bool = False,
+              classifier_names: Optional[List] = None, precision_alpha: float = 0.8):
+    classifier_names = classifier_names if classifier_names is not None else ['XGBoost',
+                                                                              'LogisticRegression']  # ['LogisticRegression']) # ['RandomForest', 'XGBoost', 'LogisticRegression'])
+    classifier_name = trial.suggest_categorical('classifier', classifier_names)
     if classifier_name == 'SVC':
         svc_c = trial.suggest_float('svc_c', 1e-1, 1e3, log=True)
         model = sklearn.svm.SVC(C=svc_c, gamma='auto')
@@ -20,7 +24,6 @@ def objective(trial, X_train, y_train):
         rf_n_estimators = trial.suggest_int('rf_n_estimators', 2, 16, log=True)
         model = sklearn.ensemble.RandomForestClassifier(max_depth=rf_max_depth, n_estimators=rf_n_estimators)
     elif classifier_name == 'LogisticRegression':
-        # use_feature_selection = True
         logistic_regression_c = trial.suggest_float('logistic_regression_c', 1e-4, 1e1, log=True)
         logr_penalty = trial.suggest_categorical('logr_penalty', ["l1", "l2"])
         model = sklearn.linear_model.LogisticRegression(C=logistic_regression_c, penalty=logr_penalty,
@@ -34,17 +37,18 @@ def objective(trial, X_train, y_train):
         }
         model = XGBClassifier(**param)
 
-    # subsample = trial.suggest_categorical('subsample', [True, False])
-    # if subsample:
-    #     subsample_indexs = balanced_subsample(y_train)
-    #     X_train = X_train.loc[subsample_indexs]
-    #     y_train = y_train.loc[subsample_indexs]
+    if try_balance_with_subsample:
+        subsample = trial.suggest_categorical('subsample', [True, False])
+        if subsample:
+            subsample_indexs = balanced_subsample(y_train)
+            X_train = X_train.loc[subsample_indexs]
+            y_train = y_train.loc[subsample_indexs]
 
     cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=0)
 
     if use_feature_selection:
         fix_feature_selection = trial.suggest_categorical('fix_feature_selection', [True, False])
-        n_features_to_select = 'auto'
+        alpha_features_to_select = 'auto'
         if fix_feature_selection:
             alpha_features_to_select = trial.float("alpha_features_to_select", 0.1, 0.9)
         sfs = SequentialFeatureSelector(model, scoring='f1_weighted', n_features_to_select=alpha_features_to_select,
@@ -53,8 +57,7 @@ def objective(trial, X_train, y_train):
 
     scores = cross_validate(model, X_train, y_train, cv=cv,
                             scoring=['accuracy', 'precision', 'f1', 'f1_weighted', 'f1_macro'])
-    prec_alpha = 0.8
-    mean_f1_prec_score = np.mean(scores['test_f1_weighted'] + scores['test_precision'] * prec_alpha)
+    mean_f1_prec_score = np.mean(scores['test_f1_weighted'] + scores['test_precision'] * precision_alpha)
 
     trial.set_user_attr(key="best_booster", value=model)
     return mean_f1_prec_score
@@ -65,9 +68,10 @@ def callback(study, trial):
         study.set_user_attr(key="best_booster", value=trial.user_attrs["best_booster"])
 
 
-def get_best_model_with_optuna(X_train, y_train, n_trials=30):
+def get_best_model_with_optuna(X_train, y_train, n_trials=30, **extra_params_for_hp_search):
     study = optuna.create_study(direction='maximize')
-    study.optimize(partial(objective, X_train=X_train, y_train=y_train), n_trials=n_trials, callbacks=[callback])
+    study.optimize(partial(objective, X_train=X_train, y_train=y_train, **extra_params_for_hp_search),
+                   n_trials=n_trials, callbacks=[callback])
     best_model = study.user_attrs["best_booster"]
     best_trail = study.best_trial
     return best_model, best_trail
