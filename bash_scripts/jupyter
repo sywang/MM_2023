@@ -1,4 +1,5 @@
-conda activate sc_clustering_noam
+module load miniconda/22.11.1_environmentally
+conda activate CLL_2024 # sc_clustering_noam
 cd repos/MM_2023
 export JUPYTER_ALLOW_INSECURE_WRITES=true
 jupyter notebook --no-browser --port 28888
