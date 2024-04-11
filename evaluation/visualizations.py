@@ -1,6 +1,54 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import seaborn as sns
+from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
+from sklearn.metrics import PrecisionRecallDisplay, precision_recall_curve
+from sklearn.metrics import RocCurveDisplay, roc_curve
+
+
+def plot_ROC_PRauc_CM_stem(y_true, y_pred, y_proba, pos_label):
+    fpr, tpr, _ = roc_curve(y_true, y_proba, pos_label=pos_label)
+    roc_display = RocCurveDisplay(fpr=fpr, tpr=tpr)
+
+    prec, recall, _ = precision_recall_curve(y_true, y_proba, pos_label=pos_label)
+    pr_display = PrecisionRecallDisplay(precision=prec, recall=recall)
+
+    cm = confusion_matrix(y_true, y_pred)
+    cm_display = ConfusionMatrixDisplay(cm)
+
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 8))
+    roc_display.plot(ax=ax1, color="red")
+    pr_display.plot(ax=ax2)
+    cm_display.plot(ax=ax3)
+    plot_stemplot(y_true, y_proba, ax=ax4)
+
+    plt.show()
+
+
+def plot_stemplot(y_true, y_proba, ax=None):
+    y_df = pd.DataFrame(y_true)
+    y_df["score"] = y_proba
+    y_df = y_df.sort_values(by="score", ascending=False)
+    y_df = y_df.reset_index().reset_index()
+
+    y_df_response = y_df[y_df[y_true.name] == 1]
+    y_df_non_response = y_df[y_df[y_true.name] == 0]
+
+    if ax is None:
+        (markers1, stemlines1, baseline1) = plt.stem(y_df_response['index'], y_df_response["score"], bottom=0.5)
+        (markers2, stemlines2, baseline2) = plt.stem(y_df_non_response['index'], y_df_non_response["score"], bottom=0.5)
+        plt.setp(markers1, marker='o', markersize=3, markeredgecolor="red", markeredgewidth=2)
+        plt.setp(markers2, marker='o', markersize=3, markeredgecolor="blue", markeredgewidth=2)
+        plt.setp(stemlines1, linestyle="-", color="olive", linewidth=2)
+        plt.ylabel('Prediction scores')
+    else:
+        (markers1, stemlines1, baseline1) = ax.stem(y_df_response['index'], y_df_response["score"], bottom=0.5)
+        (markers2, stemlines2, baseline2) = ax.stem(y_df_non_response['index'], y_df_non_response["score"], bottom=0.5)
+        plt.setp(markers1, marker='o', markersize=3, markeredgecolor="red", markeredgewidth=2)
+        plt.setp(markers2, marker='o', markersize=3, markeredgecolor="blue", markeredgewidth=2)
+        plt.setp(stemlines1, linestyle="-", color="olive", linewidth=2)
+        plt.ylabel('Prediction scores')
 
 
 def make_confusion_matrix(cf,

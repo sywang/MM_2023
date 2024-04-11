@@ -25,6 +25,23 @@ DEBUG_MODE = False
 DEBUG_N_BATCHES = 10
 
 
+class MultiMethodFromPlatesDataLoader(AnnDataLoader):
+    def __init__(self, sc_data_dirs: List[Path], plates_data_paths: List[Path], plate_id_col_name: str,
+                 plates_data_transform_functions: Optional[List[Callable[[pd.DataFrame], pd.DataFrame]]] = None):
+        if len(sc_data_dirs) != len(plates_data_paths):
+            raise ValueError(f"got sc_data_dirs and plates_data_paths with different length, both need to much")
+        self.loaders = []
+        for sc_data_dir, plates_data_path in zip(sc_data_dirs, plates_data_paths):
+            self.loaders.append(FromPlatesDataLoader(sc_data_dir=sc_data_dir,
+                                                     plates_data_path=plates_data_path,
+                                                     plate_id_col_name=plate_id_col_name,
+                                                     plates_data_transform_functions=plates_data_transform_functions))
+
+    def load_data_to_anndata(self) -> ad.AnnData:
+        ads = [loader.load_data_to_anndata() for loader in self.loaders]
+        return ad.concat(adatas=ads)
+
+
 class FromPlatesDataLoader(AnnDataLoader):
     def __init__(self, sc_data_dir: Path, plates_data_path: Path, plate_id_col_name: str,
                  plates_data_transform_functions: Optional[List[Callable[[pd.DataFrame], pd.DataFrame]]] = None):

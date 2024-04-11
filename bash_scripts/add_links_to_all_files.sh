@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Set source and target directories
-source_dir="/home/labs/amit/shuangyi/Project_MM_2023/scdata_MARS" #scdata_SPID"
+source_dir="/home/labs/amit/shuangyi/Project_MM_2023/scdata_SPID" #scdata_SPID, scdata_MARS
 target_dir="/home/labs/amit/noamsh/data/mm_2023/all_scdata"
 
 # Ensure the target directory exists
-mkdir -p "$target_dir"
+ mkdir -p "$target_dir"
 
 # Iterate over files in source directory
 for source_file in "$source_dir"/*; do

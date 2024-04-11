@@ -35,6 +35,6 @@ if __name__ == '__main__':
     conf = OmegaConf.load(args.config)
 
     logging_file_path = Path(conf.outputs.output_dir, conf.outputs.logging_file_name)
-    set_file_logger(logging_file_path)
+    set_file_logger(logging_file_path, prefix="load")
 
     load_sc_data_to_anndata(config=conf)
