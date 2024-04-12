@@ -23,7 +23,7 @@ def classifiaction_cv_objective(trial, X_train, y_train, use_feature_selection: 
         svc_c = trial.suggest_float('svc_c', 1e-1, 1e3, log=True)
         model = sklearn.svm.SVC(C=svc_c, gamma='auto', probability=True)
     elif classifier_name == 'RandomForest':
-        rf_max_depth = trial.suggest_int('rf_max_depth', 1, 4, log=True)
+        rf_max_depth = trial.suggest_int('rf_max_depth', 1, 3, log=True)
         rf_n_estimators = trial.suggest_int('rf_n_estimators', 16, 64, log=True)
         rf_max_samples = trial.suggest_categorical("rf_max_samples", [0.8])  # [None, 0.8]
         rf_class_weight = trial.suggest_categorical("rf_class_weight", [None, "balanced_subsample"])  # [None, 0.8]
