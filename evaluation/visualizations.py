@@ -40,14 +40,14 @@ def plot_stemplot(y_true, y_proba, ax=None):
         (markers2, stemlines2, baseline2) = plt.stem(y_df_non_response['index'], y_df_non_response["score"], bottom=0.5)
         plt.setp(markers1, marker='o', markersize=3, markeredgecolor="red", markeredgewidth=2)
         plt.setp(markers2, marker='o', markersize=3, markeredgecolor="blue", markeredgewidth=2)
-        plt.setp(stemlines1, linestyle="-", color="olive", linewidth=2)
+        plt.setp(stemlines1, linestyle="-", color="red", linewidth=2)
         plt.ylabel('Prediction scores')
     else:
         (markers1, stemlines1, baseline1) = ax.stem(y_df_response['index'], y_df_response["score"], bottom=0.5)
         (markers2, stemlines2, baseline2) = ax.stem(y_df_non_response['index'], y_df_non_response["score"], bottom=0.5)
         plt.setp(markers1, marker='o', markersize=3, markeredgecolor="red", markeredgewidth=2)
         plt.setp(markers2, marker='o', markersize=3, markeredgecolor="blue", markeredgewidth=2)
-        plt.setp(stemlines1, linestyle="-", color="olive", linewidth=2)
+        plt.setp(stemlines1, linestyle="-", color="red", linewidth=2)
         plt.ylabel('Prediction scores')
 
 
