@@ -5,10 +5,10 @@ data_loading:
   sc_sequencing:
     sc_sequencing_data_dir: ["/home/labs/amit/shuangyi/Project_MM_2023/scdata_MARS",  "/home/labs/amit/eyald/sc_pipeline/scdb_v4_human/output/umi.tab"] #"/home/labs/amit/shuangyi/Project_MM_2023/scdata_SPID"]
 annotation:
-  annotations_file_name: 'None' # /home/labs/amit/noamsh/data/mm_2023/cells/cells_snnotation_20231110.csv
-  cell_id_columns_name: 'Unnamed: 0'
-  patient_id_column_name: 'Weizmann.Code'
-  cell_type_columns: 'Annotation'
+  annotations_file_name: "/home/labs/amit/noamsh/data/mm_2023/cells/cells_annotation_20240410.csv" # 'None' - to no load annotaions
+  cell_id_columns_name: 'cID'
+  patient_id_column_name: 'None' #'Weizmann.Code'
+  cell_type_columns: 'Populations'
 pp:
   mitochondrial_gene_patterns: [ "^MT-", "^MTMR", "^MTND", "^MTRN", "^MRPS", "^MRPL" ]
   blacklist_genes_pattern_list: [ "^ERCC-","^MTMR","^MTND","^MTRN","^HSP","^MRPS","^MRPL", "^IGJ","^IGH","^IGK", "^IGL",
@@ -27,4 +27,4 @@ outputs:
   logging_file_name: log.log
   loaded_adata_file_name: raw_adata.h5ad
   processed_adata_file_name: pp_adata.h5ad
-  scvi_model_name: scvi_model
+  scvi_model_prefix: scvi_model

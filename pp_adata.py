@@ -35,6 +35,7 @@ def pre_process(config: DictConfig):
         adata = load_sc_data_to_anndata(config)
 
     if config.annotation.annotations_file_name != "None":
+        logging.info(f"loading annotations from {config.annotation.annotations_file_name}")
         load_annotations(adata, config)
 
     logging.info(f"dropping genes from blacklist")
