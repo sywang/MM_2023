@@ -8,8 +8,7 @@ from sklearn.metrics import RocCurveDisplay, roc_curve
 
 
 def plot_ROC_PRauc_CM_stem(y_true, y_pred, y_proba, pos_label=1):
-    # fpr, tpr, _ = roc_curve(y_true, y_proba, pos_label=pos_label)
-    # roc_display = RocCurveDisplay(fpr=fpr, tpr=tpr)
+
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(24, 6))
 
     RocCurveDisplay.from_predictions(y_true=y_true, y_pred=y_proba, pos_label=pos_label,
