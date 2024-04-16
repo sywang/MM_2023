@@ -16,8 +16,11 @@ from clinical_predictions.utils import balanced_subsample
 def classifiaction_cv_objective(trial, X_train, y_train, use_feature_selection: bool = False,
                                 try_balance_with_subsample: bool = False,
                                 classifier_names: Optional[List] = None, precision_alpha: float = 0.8):
-    classifier_names = classifier_names if classifier_names is not None else ['RandomForest',# 'XGBoost',
-                                                                              'LogisticRegression']  # ['LogisticRegression', 'SVC','RandomForest', 'XGBoost', 'LogisticRegression'])
+    classifier_names = classifier_names if classifier_names is not None else [
+        'RandomForest',
+        'XGBoost',
+        'LogisticRegression'
+    ]  # ['LogisticRegression', 'SVC','RandomForest', 'XGBoost'])
     classifier_name = trial.suggest_categorical('classifier', classifier_names)
     if classifier_name == 'SVC':
         svc_c = trial.suggest_float('svc_c', 1e-1, 1e3, log=True)
