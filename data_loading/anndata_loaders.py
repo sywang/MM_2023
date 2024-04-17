@@ -78,7 +78,7 @@ class FromPlatesDataLoader(AnnDataLoader):
         else:
             adatas = process_map(partial(self._get_single_plate, col_names=col_names),
                                  list(plates_data_df.iterrows()), max_workers=os.cpu_count() // 2,
-                                 desc="loading relevant plates",
+                                 desc="loading relevant plates", chunksize=5,
                                  unit="plate")
         logging.info("merging to single adata")
         adata = ad.concat(adatas, merge="same")
