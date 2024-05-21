@@ -7,6 +7,8 @@ from pathlib import Path
 import anndata as ad
 from omegaconf import OmegaConf, DictConfig
 
+from io_utils import generate_path_in_output_dir
+
 sys.path.append(os.getcwd())
 
 from data_loading.utils import load_dataframe_from_file, merge_labels_to_adata
@@ -27,7 +29,8 @@ def load_annotations(adata: ad.AnnData, config: DictConfig):
 
 
 def pre_process(config: DictConfig):
-    adata_path_from_config = Path(config.outputs.output_dir, config.outputs.loaded_adata_file_name)
+    adata_path_from_config = generate_path_in_output_dir(config, config.outputs.loaded_adata_file_name,
+                                                         add_version=True)
     if adata_path_from_config.exists():
         logging.info(f"reading raw AnnData from {adata_path_from_config}")
         adata = ad.read_h5ad(adata_path_from_config)
@@ -48,8 +51,8 @@ def pre_process(config: DictConfig):
     logging.info(f"dropping mitochondrial genes")
     adata = drop_blacklist_genes_by_pattern(adata, config.pp.mitochondrial_gene_patterns)
 
-    processed_adata_path = Path(config.outputs.output_dir,
-                                config.outputs.processed_adata_file_name)
+    processed_adata_path = generate_path_in_output_dir(config, config.outputs.processed_adata_file_name,
+                                                       add_version=True)
     if processed_adata_path is not None:
         adata.write(processed_adata_path)
         logging.info(f"saving processed AnnData to file - {processed_adata_path}")
@@ -67,7 +70,7 @@ if __name__ == '__main__':
 
     conf = OmegaConf.load(args.config)
 
-    logging_file_path = Path(conf.outputs.output_dir, conf.outputs.logging_file_name)
+    logging_file_path = generate_path_in_output_dir(conf, conf.outputs.logging_file_name)
     set_file_logger(logging_file_path, prefix="pp")
 
     pre_process(config=conf)

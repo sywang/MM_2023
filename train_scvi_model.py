@@ -8,6 +8,7 @@ import scvi
 import torch
 from omegaconf import OmegaConf
 
+from io_utils import generate_path_in_output_dir
 from sc_classification.var_genes import normalize_and_choose_genes, shuang_genes_to_keep
 
 
@@ -26,24 +27,24 @@ def train_scvi_model(adata_train: ad.AnnData, counts_layer: str = "counts",
 
 def generate_model_name(config, extra_description: Optional[str] = None) -> str:
     if config.sc_classification.use_shuang_var_genes != 'None':
-        model_name = f"{config.outputs.scvi_model_prefix}_{config.sc_classification.use_shuang_var_genes}_genes"
+        name = f"{config.outputs.scvi_model_prefix}_{config.sc_classification.use_shuang_var_genes}_genes"
     else:
-        model_name = config.outputs.scvi_model_prefix
+        name = config.outputs.scvi_model_prefix
     if extra_description is not None:
-        model_name += extra_description
-    model_name += f"_{date.today().isoformat()}"
-    return model_name
+        name += extra_description
+    return name
 
 
-def load_pp_adata_to_train(config, counts_layer="counts") -> ad.AnnData:
-    adata_path = Path(config.outputs.output_dir, config.outputs.processed_adata_file_name)
+def load_pp_adata_after_norm_and_hvg(config) -> ad.AnnData:
+    adata_path = generate_path_in_output_dir(config, config.outputs.processed_adata_file_name, add_version=True)
     adata = ad.read_h5ad(adata_path)
 
+    counts_layer = config.scvi_settings.counts_layer_name
     adata.layers[counts_layer] = adata.X.copy()  # preserve counts needed for normalize_and_choose_genes
     genes_to_keep = shuang_genes_to_keep(genes_names=adata.var_names,
                                          flavor=config.sc_classification.use_shuang_var_genes)
-    loaded_adata = normalize_and_choose_genes(adata, config, genes_to_keep=genes_to_keep)
-    return loaded_adata
+    norm_adata = normalize_and_choose_genes(adata, config, genes_to_keep=genes_to_keep)
+    return norm_adata
 
 
 if __name__ == '__main__':
@@ -51,11 +52,13 @@ if __name__ == '__main__':
 
     conf = OmegaConf.load('config.yaml')
 
-    counts_layer_name = "counts"
-    adata_for_training = load_pp_adata_to_train(conf, counts_layer=counts_layer_name)
+    adata_for_training = load_pp_adata_after_norm_and_hvg(conf)
 
-    model = train_scvi_model(adata_for_training, counts_layer=counts_layer_name, batch_key="Method")
+    model = train_scvi_model(adata_for_training,
+                             counts_layer=conf.scvi_settings.counts_layer_name,
+                             batch_key=conf.scvi_settings.batch_key)
 
     model_name = generate_model_name(conf)
-    model_path = os.path.join(conf.outputs.output_dir, model_name)
+    model_path = generate_path_in_output_dir(conf, model_name,
+                                             add_date_timestamp=conf.outputs.add_timestamp)
     model.save(model_path, overwrite=True)
