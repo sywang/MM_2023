@@ -14,7 +14,7 @@ from sklearn.neighbors import KNeighborsClassifier
 
 from io_utils import generate_path_in_output_dir
 from logging_utils import set_file_logger
-from pre_processing.utils import add_number_of_patients_in_neighborhood, count_number_of_annotation_in_neighborhood
+from sc_classification.utils import add_number_of_patients_in_neighborhood, count_number_of_annotation_in_neighborhood
 from train_scvi_model import load_pp_adata_after_norm_and_hvg, generate_model_name
 
 
