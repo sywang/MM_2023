@@ -1,13 +1,19 @@
-from typing import List
+from typing import List, Optional
 
 import pandas as pd
 
 
-def merge_transcriptom_data_to_raw_hospital(transcriptom_dataset: pd.DataFrame,
-                                            raw_hospital_dataset: pd.DataFrame) -> pd.DataFrame:
-    dataset = transcriptom_dataset[transcriptom_dataset["Transcriptom"].fillna(False)]
-    dataset = dataset.drop(columns=["Unnamed: 0"])
-    dataset = dataset.set_index("PID")
+def merge_transcriptom_data_to_raw_hospital(transcriptome_dataset: pd.DataFrame,
+                                            raw_hospital_dataset: pd.DataFrame,
+                                            filter_transcriptome_dataset_by_col: Optional[str] = "Transcriptom",
+                                            transcriptome_dataset_patient_id_col_name: Optional[str] = "PID") -> pd.DataFrame:
+    dataset = transcriptome_dataset
+    if filter_transcriptome_dataset_by_col is not None:
+        dataset = transcriptome_dataset[transcriptome_dataset[filter_transcriptome_dataset_by_col].fillna(False)]
+    if "Unnamed: 0" in dataset.columns:
+        dataset = dataset.drop(columns=["Unnamed: 0"])
+    if transcriptome_dataset_patient_id_col_name is not None:
+        dataset = dataset.set_index("PID")
 
     ## add post treatment columns
     post_treatment_cols = [col for col in raw_hospital_dataset.columns if ".2" in col]
@@ -48,5 +54,3 @@ def generate_refracrotines_dataset(dataset: pd.DataFrame, treatment: str, non_re
     y = pd.concat([ref_mask[ref_mask].astype(int), non_ref_mask[non_ref_mask].astype(int) - 1])
 
     return X, y
-
-
