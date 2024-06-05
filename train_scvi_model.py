@@ -38,7 +38,11 @@ def generate_model_name(config, extra_description: Optional[str] = None) -> str:
 def load_pp_adata_after_norm_and_hvg(config) -> ad.AnnData:
     adata_path = generate_path_in_output_dir(config, config.outputs.processed_adata_file_name, add_version=True)
     adata = ad.read_h5ad(adata_path)
+    norm_adata = norm_and_hvg(adata, config)
+    return norm_adata
 
+
+def norm_and_hvg(adata, config):
     counts_layer = config.scvi_settings.counts_layer_name
     adata.layers[counts_layer] = adata.X.copy()  # preserve counts needed for normalize_and_choose_genes
     genes_to_keep = shuang_genes_to_keep(genes_names=adata.var_names,
