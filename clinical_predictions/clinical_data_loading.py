@@ -21,7 +21,7 @@ def merge_transcriptom_data_to_raw_hospital(transcriptome_dataset: pd.DataFrame,
     fish_cols = [col for col in raw_hospital_dataset.columns if
                  "t(" in col or "del(" in col or col in ['1q21+', 'IGH rearrangement',
                                                          'Cytogenetics Risk (0=standard risk, 1=single hit, 2=2+ hits)']]
-    post_treatment_data = raw_hospital_dataset[raw_hospital_dataset["Time"] != "Post"][
+    post_treatment_data = raw_hospital_dataset[raw_hospital_dataset["Time"] != "Post"][ #TODO not good to throw "Post", nned maybe
         ["Code"] + post_treatment_cols + fish_cols].set_index("Code")
     dataset = dataset.merge(post_treatment_data, how="left", left_index=True, right_index=True, validate="one_to_one")
 
