@@ -1,5 +1,8 @@
 scanpy
 pandas
+optuna
+xgboost
 omegaconf
 leidenalg
 pyreadr
+xlrd
