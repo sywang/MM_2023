@@ -1,7 +1,7 @@
 data_loading:
-  version: '20240519'
+  version: '20240619'
   plates:
-    plates_data_path: [ "/home/labs/amit/noamsh/data/mm_2023/Blueprint_MM_BM_MARS_Plates_20240519.csv", "/home/labs/amit/noamsh/data/mm_2023/Blueprint_MM_BM_SPID_Plates_20240519.csv", "/home/labs/amit/noamsh/data/mm_2023/Blueprint_MM_Blood_MARS_Plates_20240519.csv", "/home/labs/amit/noamsh/data/mm_2023/Blueprint_MM_Blood_SPID_Plates_20240519.csv"]
+    plates_data_path: [ "/home/labs/amit/noamsh/data/mm_2023/Blueprint_MM_BM_MARS_Plates_2024-06-19.csv", "/home/labs/amit/noamsh/data/mm_2023/Blueprint_MM_BM_SPID_Plates_2024-06-19.csv", "/home/labs/amit/noamsh/data/mm_2023/Blueprint_MM_Blood_MARS_Plates_2024-06-19.csv", "/home/labs/amit/noamsh/data/mm_2023/Blueprint_MM_Blood_SPID_Plates_2024-06-19.csv"]
     plate_id_column_name: Amp.Batch.ID
   sc_sequencing:
     sc_sequencing_data_dir: [ "/home/labs/amit/shuangyi/Project_MM_2023/scdata_MARS",  "/home/labs/amit/eyald/sc_pipeline/scdb_v4_human/output/umi.tab","/home/labs/amit/eyald/sc_pipeline/scdb_hisat_human_hg38/output/umi.tab","/home/labs/amit/eyald/sc_pipeline/scdb_v4_human/output/umi.tab" ]
