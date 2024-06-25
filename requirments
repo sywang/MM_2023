@@ -1,3 +1,5 @@
 scanpy
 pandas
 omegaconf
+leidenalg
+pyreadr

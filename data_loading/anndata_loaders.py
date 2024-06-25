@@ -11,7 +11,7 @@ import scanpy as sc
 from scipy.sparse import csr_matrix
 from tqdm.contrib.concurrent import process_map
 
-from data_loading.plates_data_loader import load_plates_data_from_file
+from data_loading.utils import load_dataframe_from_file
 
 
 class AnnDataLoader(ABC):
@@ -23,6 +23,23 @@ class AnnDataLoader(ABC):
 
 DEBUG_MODE = False
 DEBUG_N_BATCHES = 10
+
+
+class MultiMethodFromPlatesDataLoader(AnnDataLoader):
+    def __init__(self, sc_data_dirs: List[Path], plates_data_paths: List[Path], plate_id_col_name: str,
+                 plates_data_transform_functions: Optional[List[Callable[[pd.DataFrame], pd.DataFrame]]] = None):
+        if len(sc_data_dirs) != len(plates_data_paths):
+            raise ValueError(f"got sc_data_dirs and plates_data_paths with different length, both need to much")
+        self.loaders = []
+        for sc_data_dir, plates_data_path in zip(sc_data_dirs, plates_data_paths):
+            self.loaders.append(FromPlatesDataLoader(sc_data_dir=sc_data_dir,
+                                                     plates_data_path=plates_data_path,
+                                                     plate_id_col_name=plate_id_col_name,
+                                                     plates_data_transform_functions=plates_data_transform_functions))
+
+    def load_data_to_anndata(self) -> ad.AnnData:
+        ads = [loader.load_data_to_anndata() for loader in self.loaders]
+        return ad.concat(adatas=ads)
 
 
 class FromPlatesDataLoader(AnnDataLoader):
@@ -46,7 +63,7 @@ class FromPlatesDataLoader(AnnDataLoader):
         return cur_data
 
     def load_data_to_anndata(self) -> ad.AnnData:
-        plates_data_df = load_plates_data_from_file(self.plates_data_path)
+        plates_data_df = load_dataframe_from_file(self.plates_data_path)
         plates_data_df = plates_data_df.dropna(axis=0, subset=[self.plate_id_col_name])
         if DEBUG_MODE:
             self.plates_data_transform_functions.append(lambda df: df.head(DEBUG_N_BATCHES))
@@ -61,7 +78,7 @@ class FromPlatesDataLoader(AnnDataLoader):
         else:
             adatas = process_map(partial(self._get_single_plate, col_names=col_names),
                                  list(plates_data_df.iterrows()), max_workers=os.cpu_count() // 2,
-                                 desc="loading relevant plates",
+                                 desc="loading relevant plates", chunksize=5,
                                  unit="plate")
         logging.info("merging to single adata")
         adata = ad.concat(adatas, merge="same")
