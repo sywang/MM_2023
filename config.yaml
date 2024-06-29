@@ -47,7 +47,7 @@ annotation_prediction:
   global_manifold:
     leiden_resolution: 0.2
   within_pc:
-    leiden_resolution: 1
+    leiden_resolution: 1.5
     min_counts_pc: None  # for no extra filter: None
   within_tme:
     k: 35
