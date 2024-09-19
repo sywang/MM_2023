@@ -20,7 +20,7 @@ annotation:
   Disease: 'Disease'
   biopsy_sequence_column_name: 'Biopsy.Sequence'
   clinical_data:
-    clinical_data_file_path: '/home/labs/amit/noamsh/data/mm_2023/clinical_prediction/Annonymized_CRF_BP_19062024.xlsx'
+    clinical_data_file_path: '/home/labs/amit/noamsh/data/mm_2023/clinical_prediction/Anonymized_CRF_BP_01082024.xlsx'
     patient_id_column_name: 'Code'
     biopsy_sequence_column_name: 'Biopsy sequence No.'
 pp:
@@ -46,6 +46,7 @@ scvi_settings:
   only_pc_neighborhood_key: "pc"
   counts_imputation_batch: "SPID"
   pc_expression_layer: "only_pc_scvi_expr"
+  add_normalized_expression: True
 umap_settings:
   knn_k: 30
   umap_min_dist: 0.3

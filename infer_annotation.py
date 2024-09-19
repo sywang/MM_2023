@@ -159,7 +159,7 @@ def process_pc_population(config, adata, save_only_pc_path: Optional[Path] = Non
                                                     transform_batch=config.scvi_settings.counts_imputation_batch,
                                                     transform_key=config.scvi_settings.pc_expression_layer,
                                                     compute_umap=False,
-                                                    add_normalized_expression=False)
+                                                    add_normalized_expression=config.scvi_settings.add_normalized_expression)  # ATTENTION - not tested
 
     if (save_only_pc_path is not None) or return_only_pc:
         logging.info(f"computing neighbors umap and leiden for only pc")
