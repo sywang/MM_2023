@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import copy
-from survival.utils import intersect_df, assign_quantiles, intersect_index
+from survival.utils import intersect_df, assign_quantiles, intersect_series_with_index
 from plotting.utils import generate_color_palette
 
 from lifelines.plotting import add_at_risk_counts
@@ -60,7 +60,7 @@ def create_survival_annotation(
     return SurvivalInfo(times, events, out_units, survival_type, max_time)
 
 def plot_kaplan_meier(
-    groups: pd.Series,
+    data: pd.Series,
     survival: SurvivalInfo,
     title='',
     palette=None,
@@ -83,7 +83,7 @@ def plot_kaplan_meier(
         max_time = 0
         auto_max_time = True
 
-    aligned_groups = intersect_index(groups)
+    aligned_groups = intersect_series_with_index(survival.index, data)
 
     if ax is None:
         _, ax = plt.subplots(figsize=figsize)
@@ -155,7 +155,7 @@ def plot_kaplan_meier_quantiles(
     show_pvalue=True,
     **kwargs,
 ):
-    aligned_data = intersect_index(data)
+    aligned_data = intersect_series_with_index(survival.index, data)
     quantile_data = assign_quantiles(aligned_data, q)
     if 'cmap' in kwargs:
         cmap = kwargs['cmap']
@@ -171,9 +171,9 @@ def calculate_kaplan_meier_quantiles(
     survival: SurvivalInfo,
     q=(0.5,),
 ):
-    # assign quantile and do logrank
+    # assign quantile and do logrank test
 
-    aligned_data = intersect_index(data)
+    aligned_data = intersect_series_with_index(survival.index, data)
     quantile_data = assign_quantiles(aligned_data, q)
 
     kmf = KaplanMeierFitter()

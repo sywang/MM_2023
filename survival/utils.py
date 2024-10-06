@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def intersect_index(index: pd.Index, data: pd.Series) -> pd.Series:
-    aligned_data = data.loc[index.intersection(data.index)]
-    return aligned_data
+def intersect_series_with_index(index: pd.Index, data: pd.Series) -> pd.Series:
+    aligned_series = data.loc[index.intersection(data.index)]
+    return aligned_series
 
 def intersect_df(dataframes=()):
     """
