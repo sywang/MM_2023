@@ -3,6 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def intersect_series_with_index(index: pd.Index, data: pd.Series) -> pd.Series:
+    """
+    returns series intersected with given index
+    """
     aligned_series = data.loc[index.intersection(data.index)]
     return aligned_series
 
