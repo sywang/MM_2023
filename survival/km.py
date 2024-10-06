@@ -14,7 +14,7 @@ class SurvivalInfo:
         self,
         times: pd.Series,
         events: pd.Series,
-        units='Months',
+        units='Days',
         survival_type='PFS',
         max_time=None,
     ):
@@ -68,7 +68,6 @@ def plot_kaplan_meier(
     ax=None,
     figsize=(4, 4.5),
     p_digits=3,
-    order=None,
     cmap=plt.cm.rainbow,
     max_time=None,
     legend='in',
@@ -84,14 +83,11 @@ def plot_kaplan_meier(
         auto_max_time = True
 
     aligned_groups = intersect_series_with_index(survival.index, data)
+    order = list(sorted(aligned_groups.dropna().unique()))
+    aligned_groups = aligned_groups[aligned_groups.isin(order)]
 
     if ax is None:
         _, ax = plt.subplots(figsize=figsize)
-
-    if order is None:
-        order = list(sorted(aligned_groups.dropna().unique()))
-
-    aligned_groups = aligned_groups[aligned_groups.isin(order)]
 
     if palette is None:
         color_scheme = generate_color_palette(pd.Series(order), cmap=cmap)
@@ -150,23 +146,18 @@ def plot_kaplan_meier_quantiles(
     survival: SurvivalInfo,
     q=(0.5,),
     cmap=plt.cm.Greens,
-    min_v=0.4,
     palette=None,
     show_pvalue=True,
     **kwargs,
 ):
     aligned_data = intersect_series_with_index(survival.index, data)
     quantile_data = assign_quantiles(aligned_data, q)
-    if 'cmap' in kwargs:
-        cmap = kwargs['cmap']
-    if 'min_v' in kwargs:
-        min_v = kwargs['min_v']
     if palette is None:
-        palette = generate_color_palette(quantile_data, cmap=cmap, min_v=min_v)
+        palette = generate_color_palette(quantile_data, cmap=cmap, min_v=0.4)
     kwargs['pvalue'] = show_pvalue
     return plot_kaplan_meier(quantile_data, survival, palette=palette, **kwargs)
 
-def calculate_kaplan_meier_quantiles(
+def logrank_on_quantiles(
     data: pd.Series,
     survival: SurvivalInfo,
     q=(0.5,),
@@ -175,21 +166,7 @@ def calculate_kaplan_meier_quantiles(
 
     aligned_data = intersect_series_with_index(survival.index, data)
     quantile_data = assign_quantiles(aligned_data, q)
-
-    kmf = KaplanMeierFitter()
-
     order = list(sorted(quantile_data.dropna().unique()))
-    quantile_data = quantile_data[quantile_data.isin(order)]
-
-    fitted_models = []
-    for group in order:
-        subset = quantile_data[quantile_data == group]
-        if len(subset):
-            kmf.fit(
-                survival.times[subset.index], survival.events[subset.index], label=''
-            )
-            kmf._label = group
-            fitted_models.append(copy.copy(kmf))
 
     p_value = None
     if len(order) == 2:
