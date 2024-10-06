@@ -166,12 +166,12 @@ def logrank_on_quantiles(
 
     aligned_data = intersect_series_with_index(survival.index, data)
     quantile_data = assign_quantiles(aligned_data, q)
-    order = list(sorted(quantile_data.dropna().unique()))
+    labels = list(sorted(quantile_data.dropna().unique()))
 
     p_value = None
-    if len(order) == 2:
-        group1 = quantile_data[quantile_data == order[0]]
-        group2 = quantile_data[quantile_data == order[1]]
+    if len(labels) == 2:
+        group1 = quantile_data[quantile_data == labels[0]]
+        group2 = quantile_data[quantile_data == labels[1]]
 
         if not group1.empty and not group2.empty:
             p_value = logrank_test(
@@ -180,5 +180,8 @@ def logrank_on_quantiles(
                 event_observed_A=survival.events[group1.index],
                 event_observed_B=survival.events[group2.index],
             ).p_value
+    
+    else:
+        raise ValueError("Error: multiple groups, use another functions")
 
     return len(quantile_data), p_value
