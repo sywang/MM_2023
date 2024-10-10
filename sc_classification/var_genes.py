@@ -27,17 +27,3 @@ def normalize_and_choose_genes(adata: ad.AnnData, conf: DictConfig, target_sum=1
     return adata_for_clustering
 
 
-def shuang_genes_to_keep(genes_names: Iterable[str], flavor: str) -> Optional[List[str]]:
-    if flavor == "None":
-        return None
-    elif flavor == 'MARS_SPID_common':
-        common_mars_spid_genes_shuang = pd.read_csv('/home/labs/amit/noamsh/data/mm_2023/feats/common_genes.csv')
-        allowed_genes = list(common_mars_spid_genes_shuang["0"])
-    elif flavor == 'MARS_SPID_combined':
-        combined_mars_spid_genes_shuang = pd.read_csv('/home/labs/amit/noamsh/data/mm_2023/feats/combined_genes.csv')
-        allowed_genes = list(combined_mars_spid_genes_shuang["0"])
-    else:
-        raise ValueError("value in flavor not supported,"
-                         " supported are: 'None', 'MARS_SPID_common' or 'MARS_SPID_combined'")
-    genes_to_keep = [gene for gene in genes_names if gene in allowed_genes]
-    return genes_to_keep

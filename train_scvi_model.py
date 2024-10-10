@@ -46,10 +46,7 @@ def train_scvi_model(adata_train: ad.AnnData, counts_layer: str = "counts", batc
 
 
 def generate_model_name(config, extra_description: Optional[str] = None) -> str:
-    if config.sc_classification.use_shuang_var_genes != 'None':
-        name = f"{config.outputs.scvi_model_prefix}_{config.sc_classification.use_shuang_var_genes}_genes"
-    else:
-        name = config.outputs.scvi_model_prefix
+    name = config.outputs.scvi_model_prefix
     if extra_description is not None:
         name += extra_description
     return name
@@ -65,9 +62,7 @@ def load_pp_adata_after_norm_and_hvg(config) -> ad.AnnData:
 def norm_and_hvg(adata, config):
     counts_layer = config.scvi_settings.counts_layer_name
     adata.layers[counts_layer] = adata.X.copy()  # preserve counts needed for normalize_and_choose_genes
-    genes_to_keep = shuang_genes_to_keep(genes_names=adata.var_names,
-                                         flavor=config.sc_classification.use_shuang_var_genes)
-    norm_adata = normalize_and_choose_genes(adata, config, genes_to_keep=genes_to_keep)
+    norm_adata = normalize_and_choose_genes(adata, config)  # possible to provide manually chosen genes to keep
     return norm_adata
 
 
