@@ -9,9 +9,13 @@ the names of outputs are defined in the config
 you may need to create one (the output dir) at first run
 
 raw data pipeline until full annotation
-0.  create updated plates tables and update config:
-   1. split_plates_metadata_excel_to_csvs - this is a convenient script to create the csvs used in the config
-   2. update config:
+0.  organize inputs and update config:
+   1. plates tables:
+      1. upload all plates excel to the server from dropbox (currently in "/home/labs/amit/noamsh/data/mm_2023" but this is configurable)
+      2. run split_plates_metadata_excel_to_csvs - this is a convenient script to create the csvs used in the config (also can be from a notebook)
+   2. index sorting data (if needed):
+      1. upload all fcs files to "/home/labs/amit/noamsh/data/mm_2023/index_sorting" this can be done with sub-directories
+   3. update config:
       - after running this script you need to manually edit the config to the csv created
       - also update data_loading.version in order for the scripts to create new output files instead of overriding the old
       - check other relevant parameters updates (all scripts should work without further updates)

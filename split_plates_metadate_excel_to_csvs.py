@@ -3,7 +3,9 @@ from pathlib import Path
 import pandas as pd
 
 if __name__ == '__main__':
-    plates_metadata_excel_path = Path("/home/labs/amit/noamsh/data/mm_2023/Blueprint_MM_Plates_2024-08-13.xlsx")
+    data_version = '2024-10-13'
+
+    plates_metadata_excel_path = Path(f"/home/labs/amit/noamsh/data/mm_2023/Blueprint_MM_Plates_{data_version}.xlsx")
     sheet_names = ["MM3_MARS", "MM3_SPID", "Blood_MARS", "Blood_SPID"]
 
     data_version = plates_metadata_excel_path.stem.split("_")[-1]
