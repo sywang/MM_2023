@@ -107,12 +107,12 @@ def extract_samples_metadata(adata: ad.AnnData, metadata_cols, split_by_method=T
 
 
 def get_updated_disease_col(metadata_df: pd.DataFrame, disease_col: str, hospital_disease_col: str,
-                            update_non_naive_NDMM: bool, remove_PRMM: bool, treatment_names: Optional[List[str]] = None,
+                            update_non_naive_NDMM_by_treatment_history: bool, remove_PRMM: bool, treatment_names: Optional[List[str]] = None,
                             non_naive_NDMM_value="non_naive_NDMM") -> pd.Series:
     new_disease_col = metadata_df.apply(
         lambda row: row[disease_col] if pd.isna(row[hospital_disease_col]) else row[hospital_disease_col], axis=1)
 
-    if update_non_naive_NDMM:
+    if update_non_naive_NDMM_by_treatment_history:
         if treatment_names is None:
             treatment_names = ["Bortezomib", "Ixazomib", "Carfilzomib", "Lenalidomide", "Thalidomide", "Pomalidomide",
                                "Cyclophosphamide", "Chemotherapy", "Venetoclax", "Dexamethasone", "Prednisone",

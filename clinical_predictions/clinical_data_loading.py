@@ -106,7 +106,7 @@ def load_and_process_clinical_data(clinical_data_path: Path, code_lower_case: bo
                                   3: "MGUS",
                                   4: "AL", 5: "AL",
                                   6: "MGUS", 7: "MGUS",
-                                  8: None,
+                                  8: 'Healthy',
                                   10: 'NDMM'}
         clinical_data[generated_hospital_stage] = clinical_data[hospital_stage].map(hospital_stage_map)
 
